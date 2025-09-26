@@ -57,10 +57,10 @@ start_spinner "Creating a basic rootfs"
     apt-get update
     apt-get install qemu-user-static -y
     apt-get install debootstrap=1.0.134ubuntu1 -y # Install only debootstrap, pi doesnt need it
-    debootstrap --no-check-gpg --verbose --foreign --arch=amd64 $DEB_DISTRO $ROOTFS_DIR $DEB_URL
+    debootstrap --no-check-gpg --verbose --foreign --arch=arm64 $DEB_DISTRO $ROOTFS_DIR $DEB_URL
     sed -i "s/$DEB_DISTRO main/$DEB_DISTRO main contrib/" $ROOTFS_DIR/etc/apt/sources.list
-    #cp /usr/bin/qemu-aarch64-static $ROOTFS_DIR/usr/bin/
-    #chmod +x $ROOTFS_DIR/usr/bin/qemu-aarch64-static
+    cp /usr/bin/qemu-aarch64-static $ROOTFS_DIR/usr/bin/
+    chmod +x $ROOTFS_DIR/usr/bin/qemu-aarch64-static
 } &> $SHELLTRAP
 stop_spinner
 
@@ -79,9 +79,9 @@ echo "Done running second stage"
 # # 3) Installing packages
 start_spinner "Installing packages"
 {
-    mount -B /proc $ROOTFS_DIR/proc
-	mount -B /dev $ROOTFS_DIR/dev
-	mount -B /sys $ROOTFS_DIR/sys
+    #mount -B /proc $ROOTFS_DIR/proc
+	#mount -B /dev $ROOTFS_DIR/dev
+	#mount -B /sys $ROOTFS_DIR/sys
 	
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR apt update
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR apt install git net-tools build-essential locales openssh-server wget libssl-dev sudo network-manager systemd-timesyncd u-boot-tools -y
@@ -118,7 +118,7 @@ start_spinner "Installing Klipper, Moonraker, KlipperScreen"
     cp -r scripts $ROOTFS_DIR/home/$L_USERNAME/
     chmod +x $ROOTFS_DIR/home/$L_USERNAME/scripts/*.sh
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/bash -c "echo '$L_USERNAME ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
-    LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/su -c "cd /home/$L_USERNAME/scripts && ./install_services.sh" - $L_USERNAME
+    LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/su -c -mm "cd /home/$L_USERNAME/scripts && ./install_services.sh" - $L_USERNAME
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/bash -c "sed -i '$ d' /etc/sudoers"
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/bash -c "rm -rf /home/$L_USERNAME/scripts"
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/bash -c "echo '$L_USERNAME ALL = NOPASSWD:/bin/brightness' >> /etc/sudoers"
