@@ -12,6 +12,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+# Register qemu handlers with credentials (C) so setuid works
+      - name: Enable binfmt with credentials
+        run: |
+          docker run --rm --privileged tonistiigi/binfmt:latest --install all --credential yes
 
       - name: Set up dependencies
         run: |
@@ -33,3 +37,4 @@ jobs:
         with:
           name: sonicpad-images
           path: src/out/*.img
+
