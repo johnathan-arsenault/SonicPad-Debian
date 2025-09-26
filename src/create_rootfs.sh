@@ -55,7 +55,7 @@ stop_spinner
 start_spinner "Creating a basic rootfs"
 {
     apt-get update
-    apt-get install qemu-user-static=8.2.2+ds-0ubuntu1.9 -y
+    apt-get install qemu-user-static -y
     apt-get install debootstrap=1.0.134ubuntu1 -y # Install only debootstrap, pi doesnt need it
     debootstrap --no-check-gpg --foreign --verbose --arch=arm64 $DEB_DISTRO $ROOTFS_DIR $DEB_URL
     sed -i "s/$DEB_DISTRO main/$DEB_DISTRO main contrib/" $ROOTFS_DIR/etc/apt/sources.list
