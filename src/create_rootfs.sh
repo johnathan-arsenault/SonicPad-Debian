@@ -60,7 +60,7 @@ start_spinner "Creating a basic rootfs"
     debootstrap --no-check-gpg --verbose --foreign --arch=arm64 $DEB_DISTRO $ROOTFS_DIR $DEB_URL
     sed -i "s/$DEB_DISTRO main/$DEB_DISTRO main contrib/" $ROOTFS_DIR/etc/apt/sources.list
     cp /usr/bin/qemu-aarch64-static $ROOTFS_DIR/usr/bin/
-    chmod +x $ROOTFS_DIR/usr/bin/qemu-aarch64-static
+    chmod 4755 $ROOTFS_DIR/usr/bin/qemu-aarch64-static
 } &> $SHELLTRAP
 stop_spinner
 
@@ -118,7 +118,7 @@ start_spinner "Installing Klipper, Moonraker, KlipperScreen"
     cp -r scripts $ROOTFS_DIR/home/$L_USERNAME/
     chmod +x $ROOTFS_DIR/home/$L_USERNAME/scripts/*.sh
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/bash -c "echo '$L_USERNAME ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
-    LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/su -c -mm "cd /home/$L_USERNAME/scripts && ./install_services.sh" - $L_USERNAME
+    LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/su -c "cd /home/$L_USERNAME/scripts && ./install_services.sh" - $L_USERNAME
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/bash -c "sed -i '$ d' /etc/sudoers"
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/bash -c "rm -rf /home/$L_USERNAME/scripts"
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/bash -c "echo '$L_USERNAME ALL = NOPASSWD:/bin/brightness' >> /etc/sudoers"
