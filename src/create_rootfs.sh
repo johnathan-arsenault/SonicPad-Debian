@@ -69,7 +69,7 @@ echo "Done creating bare rootfs"
 # 2) Run second stage bootstrao on rootfs
 start_spinner "Running second stage"
 {
-    LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /debootstrap/debootstrap --second-stage --verbose
+    LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /usr/bin/qemu-aarch64-static /bin/bash -c "/debootstrap/debootstrap --second-stage --verbose"
 } &> $SHELLTRAP
 stop_spinner
 
