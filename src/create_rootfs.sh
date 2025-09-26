@@ -57,10 +57,10 @@ start_spinner "Creating a basic rootfs"
     apt-get update
     apt-get install qemu-user-static -y
     apt-get install debootstrap=1.0.134ubuntu1 -y # Install only debootstrap, pi doesnt need it
-    debootstrap --no-check-gpg --no-merged-usr --foreign --verbose --arch=arm64 $DEB_DISTRO $ROOTFS_DIR $DEB_URL
+    debootstrap --no-check-gpg --verbose $DEB_DISTRO $ROOTFS_DIR $DEB_URL
     sed -i "s/$DEB_DISTRO main/$DEB_DISTRO main contrib/" $ROOTFS_DIR/etc/apt/sources.list
-    cp /usr/bin/qemu-aarch64-static $ROOTFS_DIR/usr/bin/
-    chmod +x $ROOTFS_DIR/usr/bin/qemu-aarch64-static
+    #cp /usr/bin/qemu-aarch64-static $ROOTFS_DIR/usr/bin/
+    #chmod +x $ROOTFS_DIR/usr/bin/qemu-aarch64-static
 } &> $SHELLTRAP
 stop_spinner
 
@@ -69,7 +69,8 @@ echo "Done creating bare rootfs"
 # 2) Run second stage bootstrao on rootfs
 start_spinner "Running second stage"
 {
-    LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /usr/bin/qemu-aarch64-static /bin/bash -c "/debootstrap/debootstrap --second-stage --verbose"
+    #LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /usr/bin/qemu-aarch64-static /bin/bash -c "/debootstrap/debootstrap --second-stage --verbose"
+	LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/bash -c "/debootstrap/debootstrap --second-stage --verbose"
 } &> $SHELLTRAP
 stop_spinner
 
