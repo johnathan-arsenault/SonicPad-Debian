@@ -17,10 +17,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y dosfstools e2fsprogs
-      - name: Modify to allow sudo with qemu
-        run: |
-          sudo sed -i 's/:F$/:FC/' /usr/lib/binfmt.d/qemu-aarch64.conf
-          sudo systemctl restart systemd-binfmt
           
       - name: Build rootfs
         run: |
@@ -37,6 +33,7 @@ jobs:
         with:
           name: sonicpad-images
           path: src/out/*.img
+
 
 
 
