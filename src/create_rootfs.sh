@@ -57,8 +57,6 @@ start_spinner "Creating a basic rootfs"
     apt-get update
     apt-get install qemu-user-static -y
     apt-get install debootstrap=1.0.134ubuntu1 -y # Install only debootstrap, pi doesnt need it
-	sed -i 's/:F$/:FC/' /usr/lib/binfmt.d/qemu-aarch64.conf
-	systemctl restart systemd-binfmt
     debootstrap --no-check-gpg --verbose --foreign --arch=arm64 $DEB_DISTRO $ROOTFS_DIR $DEB_URL
     sed -i "s/$DEB_DISTRO main/$DEB_DISTRO main contrib/" $ROOTFS_DIR/etc/apt/sources.list
     cp /usr/bin/qemu-aarch64-static $ROOTFS_DIR/usr/bin/
