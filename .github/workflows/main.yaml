@@ -16,7 +16,15 @@ jobs:
       - name: Set up dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y dosfstools e2fsprogs
+          sudo apt-get install -y dosfstools e2fsprogs qemu-user-static debootstrap
+      - name: Configure binfmt_misc for foreign architecture
+        # Use a privileged command to set the credentials flag
+        # This is a key step to enable setuid binaries like sudo
+        run: |
+          # This command must be run with root permissions
+          # to add the "C" flag, which allows setuid binaries.
+          sudo bash -c 'echo ":qemu-aarch64:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:FPC:/usr/bin/qemu-aarch64-static:" > /proc/sys/fs/binfmt_misc/register'
+
           
       - name: Build rootfs
         run: |
@@ -33,6 +41,7 @@ jobs:
         with:
           name: sonicpad-images
           path: src/out/*.img
+
 
 
 
