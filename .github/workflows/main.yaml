@@ -23,7 +23,7 @@ jobs:
         run: |
           # This command must be run with root permissions
           # to add the "C" flag, which allows setuid binaries.
-          sudo bash -c 'echo ":qemu-aarch64:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:FPC:/usr/bin/qemu-aarch64-static:" > /proc/sys/fs/binfmt_misc/register'
+          echo ":qemu-aarch64:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:FPC:/usr/bin/qemu-aarch64-static:" | sudo tee /proc/sys/fs/binfmt_misc/register
 
           
       - name: Build rootfs
@@ -41,6 +41,7 @@ jobs:
         with:
           name: sonicpad-images
           path: src/out/*.img
+
 
 
 
