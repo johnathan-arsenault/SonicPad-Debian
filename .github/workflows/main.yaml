@@ -18,12 +18,22 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           platforms: arm64
+      - name: Ensure binfmt_misc is available
+        shell: bash
+        run: |
+          set -e
+          # Load the kernel module (idempotent) and mount the fs if not already mounted
+          sudo modprobe binfmt_misc || true
+          if ! mountpoint -q /proc/sys/fs/binfmt_misc; then
+            sudo mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc
+          fi
+          # quick sanity
+          test -e /proc/sys/fs/binfmt_misc/register
 
       # Re-register the aarch64 binfmt handler with C (credentials) + O + F
       - name: Enable setuid for foreign arch (binfmt C flag)
         shell: bash
         run: |
-          sudo mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc || true
           # Unregister existing handler if present
           echo -1 | sudo tee /proc/sys/fs/binfmt_misc/qemu-aarch64 >/dev/null || true
           # Register with OCF; interpreter path is the static qemu shipped by the action
@@ -54,6 +64,7 @@ jobs:
         with:
           name: sonicpad-images
           path: src/out/*.img
+
 
 
 
