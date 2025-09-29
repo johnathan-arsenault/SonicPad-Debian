@@ -13,11 +13,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dosfstools e2fsprogs debootstrap qemu-user-static
+          
       # Installs QEMU emulators (no 'credential' input here)
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
           platforms: arm64
+          
       - name: Ensure binfmt_misc is available
         shell: bash
         run: |
@@ -43,11 +49,6 @@ jobs:
           | sudo tee /proc/sys/fs/binfmt_misc/register >/dev/null
           # sanity: should print 'flags: OCF'
           grep -i '^flags' /proc/sys/fs/binfmt_misc/qemu-aarch64
-          
-      - name: Set up dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y dosfstools e2fsprogs debootstrap
       
       - name: Build rootfs
         run: |
@@ -64,6 +65,7 @@ jobs:
         with:
           name: sonicpad-images
           path: src/out/*.img
+
 
 
 
