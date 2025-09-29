@@ -69,7 +69,6 @@ echo "Done creating bare rootfs"
 # 2) Run second stage bootstrao on rootfs
 start_spinner "Running second stage"
 {
-    #LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /usr/bin/qemu-aarch64-static /bin/bash -c "/debootstrap/debootstrap --second-stage --verbose"
 	LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR /bin/bash -c "/debootstrap/debootstrap --second-stage --verbose"
 } &> $SHELLTRAP
 stop_spinner
@@ -79,10 +78,6 @@ echo "Done running second stage"
 # # 3) Installing packages
 start_spinner "Installing packages"
 {
-    #mount -B /proc $ROOTFS_DIR/proc
-	#mount -B /dev $ROOTFS_DIR/dev
-	#mount -B /sys $ROOTFS_DIR/sys
-	
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR apt update
     LC_ALL=C LANGUAGE=C LANG=C chroot $ROOTFS_DIR apt install git net-tools build-essential locales openssh-server wget libssl-dev sudo network-manager systemd-timesyncd u-boot-tools -y
 } &> $SHELLTRAP
